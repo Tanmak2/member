@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+table {
+	font-family: arial, sans-serif;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+th, th {
+	border: 1px solid #dddddd;
+	text-align: left;
+	padding: 8px;
+}
+
+tr:nth-child(even) {
+	background-color: #dddddd;
+}
+
+tr:hover {
+	cursor: pointer;
+}
+</style>
+</head>
+<body>
+	<h3>member 페이지</h3>
+
+	<h3>상세 정보</h3>
+	<input id="uid" type="text" disabled="disabled" placeholder="아이디">
+	<input id="uname" type="text" disabled="disabled" placeholder="이름">
+	<input id="uage" type="text" disabled="disabled" placeholder="나이">
+	<input id="udname" type="text" disabled="disabled" placeholder="부서이름">
+
+	<h3>추가</h3>
+	<!-- <input id="c_id" type="text" placeholder="아이디 입력"> -->
+	<input id="c_name" type="text" placeholder="이름 입력">
+	<input id="c_age" type="text" placeholder="나이 입력">
+	<button type="button" onclick="doInsert()">추가</button>
+
+	<h3>수정</h3>
+	<input id="u_id" type="text" placeholder="아이디 입력">
+	<input id="u_name" type="text" placeholder="이름 입력">
+	<input id="u_age" type="text" placeholder="나이 입력">
+	<button type="button" onclick="doUpdate()">수정</button>
+
+	<h3>삭제</h3>
+	<input id="d_id" type="text" placeholder="아이디 입력">
+	<button type="button" onclick="doDelete()">삭제</button>
+
+	<table id="member">
+		<tr>
+			<th>아이디</th>
+			<th>이름</th>
+			<th>나이</th>
+			<th>부서이름</th>
+		</tr>
+	</table>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.1.js"
+	integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+	crossorigin="anonymous"></script>
+<script type="text/javascript">
+	callMyAPI();
+	function callMyAPI() {
+		$.ajax({
+			url : '/api/v1/members',
+			type : 'GET',
+			dataType : 'json',
+			success : function(response) {
+				for (var i = 0; i < response.length; i++) {
+					var html = '<tr onclick="getEmp('+response[i].id+')"><td>' + response[i].id + "</td><td>"
+							+ response[i].name + "</td><td>" + response[i].age + "</td><td>" + response[i].dept.dname + "</td></tr>"
+					$('#member').append(html);
+				}
+			}
+		});
+	}
+	function getEmp(id) {
+		$.ajax({
+			url : '/api/v1/members/' + id,
+			type : 'GET',
+			dataType : 'json',
+			success : function(response) {
+				$('#uid').val(response.id);
+				$('#uname').val(response.name);
+				$('#uage').val(response.age);
+				$('#udname').val(response.dept.dname);
+			}
+		});
+	}
+	
+	function doInsert() {
+		/* var cid = $('#c_id').val(); */
+		var cname = $('#c_name').val();
+		var cage = $('#c_age').val();
+
+		var jsonData = {
+			/* "id" : cid, */
+			"name" : cname,
+			"age" : cage
+		}
+
+		$.ajax({
+			url : '/api/v1/members',
+			type : 'POST',
+			contentType : 'application/json',
+			data : JSON.stringify(jsonData),
+			dataType : 'json',
+			success : function(response) {
+				alert("추가 완료!");
+				location.reload();
+			}
+
+		})
+	}
+
+	function doUpdate() {
+		var uid = $('#u_id').val();
+		var uname = $('#u_name').val();
+		var uage = $('#u_age').val();
+
+		var jsonData = {
+			"id" : uid,
+			"name" : uname,
+			"age" : uage
+		}
+
+		$.ajax({
+			url : '/api/v1/members',
+			type : 'PATCH',
+			contentType : 'application/json',
+			data : JSON.stringify(jsonData),
+			dataType : 'json',
+			success : function(response) {
+				alert("수정 완료!");
+				location.reload();
+			}
+
+		})
+	}
+
+	function doDelete() {
+		var did = $('#d_id').val();
+
+		$.ajax({
+			url : '/api/v1/members/' + did,
+			type : 'DELETE',
+			dataType : 'json',
+			success : function(response) {
+				alert("삭제 완료!");
+				location.reload();
+			}
+		});
+	}
+</script>
+</html>

@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class PageController {
 	
-	@GetMapping("/index")
+	@GetMapping("/member")
 	public String callMember() {
-		return "index";
+		return "member";
 	}
 }
