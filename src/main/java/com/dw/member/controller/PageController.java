@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PageController {
 
-	@GetMapping("/member")
+	@GetMapping(value = { "/", "/home" })
 	public String callMember() {
 		return "member";
 	}
